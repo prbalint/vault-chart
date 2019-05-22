@@ -1,0 +1,18 @@
+{{ if not .Values.vault.existingConfigName }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ template "vault.fullname" . }}-config"
+  labels:
+    app: "{{ template "vault.name" . }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+    chart: "{{ template "vault.chart" . }}"
+data:
+  config.json: |
+    {{ .Values.vault.config | toJson }}
+  server.crt: |
+    {{- .Files.Get "server.crt" | nindent 4 }}
+  server-key.pem: |
+    {{- .Files.Get "server-key.pem" | nindent 4 }}
+{{ end }}
